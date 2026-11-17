@@ -109,4 +109,10 @@ npm run lint
 
 ## Next stages
 
-Implement Supabase Auth and user-owned RLS tables; code/resume storage and analysis APIs; GitHub OAuth; AI services; broader integration tests; and deployment configuration. These stages are required before presenting CodeGuard AI as the complete SaaS in the original specification.
+Implement Supabase Auth and user-owned RLS tables; code/resume storage and analysis APIs; GitHub OAuth; AI services; broader integration tests; and deployment hardening. These stages are required before presenting CodeGuard AI as the complete SaaS in the original specification.
+
+## Deploy the current website
+
+The frontend is configured for Vercel from the `frontend` root directory. Import the GitHub repository, select `frontend` as the Root Directory, and use the Vite defaults (`npm run build`, output `dist`). The Vercel rewrite keeps `/dashboard` and `/visitors` working on refresh.
+
+The Node API can be created from the root `render.yaml` blueprint. Add the Supabase URL and service-role key in Render's environment settings, and set `FRONTEND_URL` to the deployed Vercel origin. After Render provides the API URL, set `VITE_API_BASE_URL` in the Vercel project's environment variables and redeploy the frontend. Apply the Supabase migration before testing `/api/health`; never place the service-role key in Vercel frontend variables.
