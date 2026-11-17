@@ -23,12 +23,13 @@ import {
   WifiOff,
 } from 'lucide-react'
 import { useVisitorAnalytics } from './hooks/useVisitorAnalytics'
+import LandingPage from './pages/LandingPage'
 import './App.css'
 
 const VisitorActivityChart = lazy(() => import('./components/VisitorActivityChart'))
 
 const navigation = [
-  { label: 'Overview', href: '/', icon: LayoutDashboard },
+  { label: 'Overview', href: '/dashboard', icon: LayoutDashboard },
   { label: 'Code analysis', href: '/code-analysis', icon: Braces },
   { label: 'Resume analyzer', href: '/resume-analyzer', icon: FileText },
   { label: 'GitHub integration', href: '/integrations', icon: GitBranch },
@@ -60,8 +61,18 @@ function App() {
   const pathname = usePathname()
   const analytics = useVisitorAnalytics(pathname)
   const currentPage = navigation.find((item) => item.href === pathname)
-  const isOverview = pathname === '/' || pathname === '/visitors'
+  const isOverview = pathname === '/dashboard' || pathname === '/visitors'
   const stats = analytics.stats
+
+  if (pathname === '/') {
+    return (
+      <LandingPage
+        analyticsStatus={analytics.status}
+        activeViewers={stats?.active_viewers}
+        daily={stats?.daily}
+      />
+    )
+  }
 
   return (
     <div className="app-shell">
@@ -292,7 +303,7 @@ function App() {
                 <p>This workspace does not return mock scan results. Code analysis, resume processing, and authentication need their server-side services configured.</p>
               </div>
             </div>
-            <a className="back-link" href="/">Back to overview <ArrowUpRight size={14} /></a>
+            <a className="back-link" href="/dashboard">Back to overview <ArrowUpRight size={14} /></a>
           </div>
         )}
       </main>

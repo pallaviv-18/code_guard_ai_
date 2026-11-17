@@ -1,6 +1,6 @@
 # CodeGuard AI — Viewer Analytics Foundation
 
-CodeGuard AI is being built as a full-stack code intelligence and resume analysis platform. The current working stage provides a React dashboard, a Node.js/Express API, and a Supabase PostgreSQL connection for public viewer analytics.
+CodeGuard AI is being built as a full-stack code intelligence and resume analysis platform. The current working stage provides a public React marketing website and analytics dashboard, a Node.js/Express API, and a Supabase PostgreSQL connection for public viewer analytics.
 
 ## What works now
 
@@ -69,7 +69,7 @@ npm install
 npm run dev
 ```
 
-`frontend\.env.local` uses `VITE_API_BASE_URL=http://localhost:3001`. Open the Vite URL printed in the terminal.
+`frontend\.env.local` uses `VITE_API_BASE_URL=http://localhost:3001`. Open the Vite URL printed in the terminal for the public home page. Choose **Open workspace** or **Live analytics** to open the dashboard.
 
 The backend checks its Supabase connection at `GET /api/health`. If configuration or the migration is missing, the UI surfaces the API/database error rather than showing fabricated counts.
 
