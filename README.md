@@ -13,7 +13,6 @@ CodeGuard AI provides a public React website and visitor analytics dashboard, a 
 - Code analysis runs locally in the browser and checks source text for possible embedded credentials, dynamic evaluation, debug statements/logging, TODOs, and long lines.
 - Resume analysis runs locally in the browser and checks common sections, bullet points, measurable outcomes, and optional job-description keywords.
 - Code and resume text are not uploaded or saved by these analysis tools. They provide heuristic guidance, not compiler, security-audit, AI, or hiring predictions.
-- GitHub App integration lists repositories selected during installation with read-only metadata access. The App private key stays on the Node API.
 
 User authentication, remote report storage, and AI-powered analysis are **not implemented**. Code/resume analysis currently runs locally and does not require those integrations.
 
@@ -28,11 +27,9 @@ Node.js / Express API (3001)
         ▼
 Supabase PostgreSQL + RLS
 
-GitHub App install flow ──► Node.js / Express API ──► GitHub API
 ```
 
 Only the backend uses `SUPABASE_SERVICE_ROLE_KEY`. The browser does not receive a Supabase key. Database tables have RLS enabled and no browser-role policies; functions return only aggregates and are executable only by Supabase's `service_role`.
-The GitHub App private key is also server-only. Installation sessions use an HttpOnly, SameSite cookie; the backend creates short-lived installation tokens and requests repository metadata only.
 
 ## Requirements
 
@@ -95,23 +92,8 @@ The backend checks its Supabase connection at `GET /api/health`. If configuratio
 | `GET` | `/api/analytics/stats?days=7` | Aggregate active viewers, page views, and unique visitors (1–90 days) |
 | `POST` | `/api/analytics/view` | Record an anonymous page view |
 | `POST` | `/api/analytics/heartbeat` | Refresh anonymous active-viewer presence |
-| `GET` | `/api/github/install` | Start the GitHub App installation flow |
-| `GET` | `/api/github/callback` | Verify the installation state and establish a session |
-| `GET` | `/api/github/status` | Check server configuration and this browser's connection |
-| `GET` | `/api/github/repositories?page=1` | List selected repositories (100 per page) |
-| `POST` | `/api/github/disconnect` | Clear this browser's GitHub App session |
 
 The public visitor metric is useful for product visibility, not billing or security decisions. Client-side tracking can be blocked or spoofed.
-
-## GitHub App setup
-
-1. Create a GitHub App in GitHub Developer Settings. Set its **Setup URL** to `https://codeguard-ai-drab.vercel.app/api/github/callback`.
-2. Grant only the **Metadata: Read-only** repository permission. Install it on only the repositories you want CodeGuard AI to list.
-3. Add `GITHUB_APP_ID`, `GITHUB_APP_SLUG`, and `GITHUB_APP_PRIVATE_KEY` to the Render API environment. The private key may be stored as PEM text or with `\n` line breaks; never put it in Vercel or a `VITE_` variable.
-4. The integration uses the Vercel `/api/github/*` proxy to keep the installation cookie same-origin. If the Render API hostname changes, update the matching rewrite in `frontend/vercel.json`.
-5. Open `/integrations` and choose **Connect GitHub App**. Disconnecting clears the current browser session; remove the App installation in GitHub to revoke its repository access.
-
-The GitHub App API does not read repository contents or modify repositories. Connecting Vercel to the GitHub source repository for automatic deployments is a separate configuration.
 
 ## Local code and resume analysis
 
@@ -123,7 +105,7 @@ Open **Code analysis** or **Resume analyzer** from the workspace. Both tools run
 
 ## Environment variables
 
-The root `.env.example` documents the current backend values and placeholders for later server-side integrations. Configure only `VITE_API_BASE_URL` in the frontend. Never prefix private credentials with `VITE_`.
+The root `.env.example` documents the current backend values. Configure only `VITE_API_BASE_URL` in the frontend. Never prefix private credentials with `VITE_`.
 
 ## Validation
 
@@ -143,6 +125,6 @@ Implement Supabase Auth and user-owned RLS tables; optional code/resume storage 
 
 ## Deploy the current website
 
-The frontend is configured for Vercel from the `frontend` root directory. Import the GitHub repository, select `frontend` as the Root Directory, and use the Vite defaults (`npm run build`, output `dist`). The Vercel rewrite keeps `/dashboard` and `/visitors` working on refresh.
+The frontend is configured for Vercel from the `frontend` root directory. Connect the source repository, select `frontend` as the Root Directory, and use the Vite defaults (`npm run build`, output `dist`). The Vercel rewrite keeps `/dashboard` and `/visitors` working on refresh.
 
 The Node API can be created from the root `render.yaml` blueprint. Add the Supabase URL and service-role key in Render's environment settings, and set `FRONTEND_URL` to the deployed Vercel origin. After Render provides the API URL, set `VITE_API_BASE_URL` in the Vercel project's environment variables and redeploy the frontend. Apply the Supabase migration before testing `/api/health`; never place the service-role key in Vercel frontend variables.

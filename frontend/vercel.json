@@ -1,9 +1,12 @@
 {
-  "rewrites": [
+  "redirects": [
     {
-      "source": "/api/github/:path*",
-      "destination": "https://codeguard-api-pmhy.onrender.com/api/github/:path*"
-    },
+      "source": "/integrations",
+      "destination": "/dashboard",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
     {
       "source": "/(.*)",
       "destination": "/"

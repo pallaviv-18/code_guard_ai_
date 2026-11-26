@@ -10,7 +10,6 @@ import {
   CircleHelp,
   Clock3,
   FileText,
-  GitBranch,
   LayoutDashboard,
   LoaderCircle,
   LockKeyhole,
@@ -26,7 +25,6 @@ import { useVisitorAnalytics } from './hooks/useVisitorAnalytics'
 import LandingPage from './pages/LandingPage'
 import CodeAnalysisPage from './pages/CodeAnalysisPage'
 import ResumeAnalyzerPage from './pages/ResumeAnalyzerPage'
-import GitHubIntegrationPage from './pages/GitHubIntegrationPage'
 import './App.css'
 
 const VisitorActivityChart = lazy(() => import('./components/VisitorActivityChart'))
@@ -35,7 +33,6 @@ const navigation = [
   { label: 'Overview', href: '/dashboard', icon: LayoutDashboard },
   { label: 'Code analysis', href: '/code-analysis', icon: Braces },
   { label: 'Resume analyzer', href: '/resume-analyzer', icon: FileText },
-  { label: 'GitHub integration', href: '/integrations', icon: GitBranch },
 ]
 const searchDestinations = [
   ...navigation,
@@ -408,7 +405,6 @@ function App() {
                 <div className="module-list">
                   <ModuleRow href="/code-analysis" icon={<Braces size={18} />} title="Code analysis" description="Local static checks and risk hints" tag="READY · LOCAL" />
                   <ModuleRow href="/resume-analyzer" icon={<FileText size={18} />} title="Resume analyzer" description="Local resume and job keyword check" tag="READY · LOCAL" />
-                  <ModuleRow href="/integrations" icon={<GitBranch size={18} />} title="GitHub repositories" description="Read-only access to selected repositories" tag="GITHUB APP" />
                 </div>
               </div>
               <div className="panel connection-panel">
@@ -441,28 +437,24 @@ function App() {
           <CodeAnalysisPage />
         ) : pathname === '/resume-analyzer' ? (
           <ResumeAnalyzerPage />
-        ) : pathname === '/integrations' ? (
-          <GitHubIntegrationPage />
         ) : (
           <div className="content placeholder-content">
             <div className="eyebrow"><span className="eyebrow-line" /> WORKSPACE MODULE</div>
             <h1>{pageTitle}</h1>
             <p className="page-description">
-              {pathname === '/integrations'
-                ? 'Connect GitHub repositories after configuring the backend OAuth credentials.'
-                : pathname === '/settings'
-                  ? 'Review the service connection status and the configuration needed to bring your workspace online.'
-                  : pathname === '/help'
-                    ? 'Find setup guidance for analytics, integrations, and the workspace modules that are still in development.'
-                    : 'This module is not connected yet. Configure the services listed in the project setup guide before using it.'}
+              {pathname === '/settings'
+                ? 'Review the service connection status and the configuration needed to bring your workspace online.'
+                : pathname === '/help'
+                  ? 'Find setup guidance for analytics and the workspace modules that are still in development.'
+                  : 'This module is not connected yet. Configure the services listed in the project setup guide before using it.'}
             </p>
             <div className="panel setup-notice">
               <div className="notice-icon"><LockKeyhole size={18} /></div>
               <div>
-                <strong>{pathname === '/help' ? 'What is available today' : pathname === '/settings' ? 'Service connection status' : 'Integration setup required'}</strong>
+                <strong>{pathname === '/help' ? 'What is available today' : pathname === '/settings' ? 'Service connection status' : 'Setup required'}</strong>
                 <p>
                   {pathname === '/help'
-                    ? 'Code and resume checks run locally in your browser. Visitor analytics uses Supabase and the Node API; GitHub repository access uses a read-only GitHub App configured on the backend.'
+                    ? 'Code and resume checks run locally in your browser. Visitor analytics uses Supabase and the Node API.'
                     : pathname === '/settings'
                       ? analytics.status === 'ready'
                         ? 'The analytics API is connected. Private credentials remain on the server and are never exposed in this browser.'
