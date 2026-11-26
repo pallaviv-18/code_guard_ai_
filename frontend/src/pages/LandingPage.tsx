@@ -23,6 +23,14 @@ type LandingPageProps = {
 
 function LandingPage({ analyticsStatus, activeViewers, daily }: LandingPageProps) {
   const isConnected = analyticsStatus === 'ready'
+  const connectionLabel =
+    isConnected
+      ? 'CONNECTED'
+      : analyticsStatus === 'loading'
+        ? 'CONNECTING'
+        : analyticsStatus === 'error'
+          ? 'API UNAVAILABLE'
+          : 'SETUP REQUIRED'
   const maxViews = Math.max(1, ...(daily?.map((day) => day.views) ?? []))
 
   return (
@@ -83,11 +91,11 @@ function LandingPage({ analyticsStatus, activeViewers, daily }: LandingPageProps
               <div className="preview-main">
                 <div className="preview-title-row">
                   <div><small>YOUR WORKSPACE</small><strong>A clearer view</strong></div>
-                  <span className="preview-live"><i /> {isConnected ? 'CONNECTED' : 'READY TO CONNECT'}</span>
+                  <span className="preview-live"><i /> {connectionLabel}</span>
                 </div>
                 <div className="preview-stats">
                   <div className="preview-stat"><span>ACTIVE VIEWERS</span><strong>{isConnected && activeViewers !== undefined ? activeViewers.toLocaleString() : '—'}</strong><small>Live audience</small></div>
-                  <div className="preview-stat"><span>CODE INSIGHTS</span><strong className="preview-dash">—</strong><small>In development</small></div>
+                  <div className="preview-stat"><span>CODE INSIGHTS</span><strong className="preview-dash">READY</strong><small>Local checks</small></div>
                 </div>
                 <div className="preview-chart">
                   <div className="preview-chart-heading"><span>VISITOR ACTIVITY</span><span>LAST 7 DAYS</span></div>
@@ -125,13 +133,13 @@ function LandingPage({ analyticsStatus, activeViewers, daily }: LandingPageProps
         <div className="section-intro">
           <div className="section-kicker">ONE CONNECTED WORKSPACE</div>
           <h2>Focused tools for your<br /><span>next step forward.</span></h2>
-          <p>Start with live audience analytics. Code intelligence and career tools are being built with the same focus on clarity and useful feedback.</p>
+          <p>Explore live audience analytics, browser-based code checks, and practical resume feedback without requiring external analysis services.</p>
         </div>
         <div className="feature-grid">
           <article className="feature-card feature-card-live">
-            <div className="feature-card-top"><span className="feature-icon analytics-feature"><Activity size={19} /></span><span className="feature-status live-status"><i /> AVAILABLE</span></div>
+            <div className="feature-card-top"><span className="feature-icon analytics-feature"><Activity size={19} /></span><span className={`feature-status ${isConnected ? 'live-status' : 'future-status'}`}>{isConnected ? <><i /> CONNECTED</> : connectionLabel}</span></div>
             <h3>Visitor analytics</h3>
-            <p>Understand your audience with live viewers, unique visitors, and page activity from your Supabase project.</p>
+            <p>Understand your audience with live viewers, unique visitors, and page activity once your Supabase project is connected.</p>
             <a href="/visitors">Explore analytics <ArrowRight size={14} /></a>
             <div className="feature-visual analytics-visual" aria-hidden="true">
               <div className="analytics-visual-label"><span>LIVE VIEWERS</span><strong>{isConnected && activeViewers !== undefined ? activeViewers.toLocaleString() : '—'}</strong></div>
@@ -139,17 +147,17 @@ function LandingPage({ analyticsStatus, activeViewers, daily }: LandingPageProps
             </div>
           </article>
           <article className="feature-card">
-            <div className="feature-card-top"><span className="feature-icon code-feature"><Braces size={19} /></span><span className="feature-status future-status">IN DEVELOPMENT</span></div>
-            <h3>Code intelligence</h3>
-            <p>Build toward a clearer way to review code quality, identify risks, and understand suggested improvements.</p>
-            <span className="feature-disabled">Coming soon <ArrowRight size={14} /></span>
+            <div className="feature-card-top"><span className="feature-icon code-feature"><Braces size={19} /></span><span className="feature-status live-status"><i /> READY · LOCAL</span></div>
+            <h3>Code analysis</h3>
+            <p>Run quick static checks for common risk hints and maintainability issues directly in your browser.</p>
+            <a href="/code-analysis">Analyze code <ArrowRight size={14} /></a>
             <div className="feature-visual code-visual" aria-hidden="true"><div className="code-line"><i>01</i><b>function</b> reviewCode<span>()</span> {'{'}</div><div className="code-line"><i>02</i><span className="code-indent" /> return <em>clear insights</em></div><div className="code-line"><i>03</i>{'}'}</div><div className="code-cursor" /></div>
           </article>
           <article className="feature-card">
-            <div className="feature-card-top"><span className="feature-icon career-feature"><FileText size={19} /></span><span className="feature-status future-status">IN DEVELOPMENT</span></div>
-            <h3>Career insights</h3>
-            <p>Shape a future resume experience around practical feedback, role fit, and clearer ways to tell your story.</p>
-            <span className="feature-disabled">Coming soon <ArrowRight size={14} /></span>
+            <div className="feature-card-top"><span className="feature-icon career-feature"><FileText size={19} /></span><span className="feature-status live-status"><i /> READY · LOCAL</span></div>
+            <h3>Resume analyzer</h3>
+            <p>Review resume structure, measurable accomplishments, and keywords from a target job description.</p>
+            <a href="/resume-analyzer">Review resume <ArrowRight size={14} /></a>
             <div className="feature-visual career-visual" aria-hidden="true"><div className="resume-paper"><span /><span /><span /><i /><span /><span /></div><div className="resume-spark"><Sparkles size={17} /></div></div>
           </article>
         </div>
@@ -159,13 +167,13 @@ function LandingPage({ analyticsStatus, activeViewers, daily }: LandingPageProps
         <div className="how-intro">
           <div className="section-kicker">A CLEARER WAY TO START</div>
           <h2>Simple to explore.<br /><span>Honest about what's next.</span></h2>
-          <p>CodeGuard AI is growing in stages. The live analytics path is connected end to end; other product modules are clearly marked until they're ready.</p>
+          <p>{isConnected ? 'Visitor analytics is connected and reporting real activity.' : 'Visitor analytics is ready to connect once Supabase and the Node API are configured.'} Code and resume reviews run locally in your browser.</p>
           <a className="text-cta" href="/dashboard">Open the workspace <ArrowUpRight size={15} /></a>
         </div>
         <div className="steps-list">
-          <article className="step-card"><span className="step-number">01</span><div className="step-icon"><GitBranch size={18} /></div><div><h3>Connect your foundation</h3><p>Configure your Supabase project and run the analytics migration.</p></div><span className="step-badge">YOU ARE HERE</span></article>
-          <article className="step-card"><span className="step-number">02</span><div className="step-icon"><Activity size={18} /></div><div><h3>See real audience activity</h3><p>View anonymous visitor counts and daily page activity in one place.</p></div><span className="step-check"><Check size={14} /></span></article>
-          <article className="step-card"><span className="step-number">03</span><div className="step-icon"><Sparkles size={18} /></div><div><h3>Build the next insights</h3><p>Code analysis and career tools are planned for upcoming stages.</p></div><span className="step-badge future-badge">UP NEXT</span></article>
+          <article className="step-card"><span className="step-number">01</span><div className="step-icon"><GitBranch size={18} /></div><div><h3>Connect your foundation</h3><p>Configure your Supabase project and run the analytics migration.</p></div><span className="step-badge">{isConnected ? 'COMPLETE' : 'YOU ARE HERE'}</span></article>
+          <article className="step-card"><span className="step-number">02</span><div className="step-icon"><Activity size={18} /></div><div><h3>See real audience activity</h3><p>View anonymous visitor counts and daily page activity in one place.</p></div>{isConnected ? <span className="step-check"><Check size={14} /></span> : <span className="step-badge future-badge">NEXT</span>}</article>
+          <article className="step-card"><span className="step-number">03</span><div className="step-icon"><Sparkles size={18} /></div><div><h3>Review code and resumes</h3><p>Use the browser-based analysis tools without connecting an external service.</p></div><span className="step-badge">READY</span></article>
         </div>
       </section>
 

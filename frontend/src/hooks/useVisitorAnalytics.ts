@@ -28,7 +28,6 @@ type AnalyticsState = {
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, '')
 const REFRESH_INTERVAL_MS = 30_000
-const RANGE_DAYS = 7
 const VISITOR_KEY = 'codeguard:visitor-id'
 const SESSION_KEY = 'codeguard:session-id'
 
@@ -74,10 +73,10 @@ async function postJson(path: string, body: Record<string, string>): Promise<voi
   }
 }
 
-async function getStats(): Promise<VisitorStats> {
+async function getStats(days: number): Promise<VisitorStats> {
   if (!API_BASE_URL) throw new Error('Node API is not configured. Set VITE_API_BASE_URL.')
 
-  const response = await fetch(`${API_BASE_URL}/api/analytics/stats?days=${RANGE_DAYS}`)
+  const response = await fetch(`${API_BASE_URL}/api/analytics/stats?days=${days}`)
   if (!response.ok) {
     const payload = (await response.json()) as { error?: string }
     throw new Error(payload.error ?? `Analytics API request failed (${response.status}).`)
@@ -88,7 +87,7 @@ async function getStats(): Promise<VisitorStats> {
   return data
 }
 
-export function useVisitorAnalytics(pathname: string): AnalyticsState {
+export function useVisitorAnalytics(pathname: string, rangeDays: number): AnalyticsState {
   const trackedPath = useRef<TrackedPath | null>(null)
   const [state, setState] = useState<AnalyticsState>({
     status: API_BASE_URL ? 'loading' : 'unconfigured',
@@ -97,9 +96,9 @@ export function useVisitorAnalytics(pathname: string): AnalyticsState {
   })
 
   const refreshStats = useCallback(async () => {
-    const stats = await getStats()
+    const stats = await getStats(rangeDays)
     setState({ status: 'ready', stats, error: null })
-  }, [])
+  }, [rangeDays])
 
   useEffect(() => {
     if (!API_BASE_URL) return

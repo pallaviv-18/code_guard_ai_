@@ -1,6 +1,6 @@
 # CodeGuard AI — Viewer Analytics Foundation
 
-CodeGuard AI is being built as a full-stack code intelligence and resume analysis platform. The current working stage provides a public React marketing website and analytics dashboard, a Node.js/Express API, and a Supabase PostgreSQL connection for public viewer analytics.
+CodeGuard AI provides a public React website and visitor analytics dashboard, a Node.js/Express API with Supabase analytics, and browser-based code and resume analysis tools.
 
 ## What works now
 
@@ -10,8 +10,11 @@ CodeGuard AI is being built as a full-stack code intelligence and resume analysi
 - Server-side validation, CORS allow-listing, security headers, request-size limits, and rate limiting.
 - Anonymous IDs only: visitor IDs stay in browser storage, session IDs are tab-scoped; no names, emails, IP addresses, or URL query parameters are stored.
 - Explicit setup and connection error states; the dashboard never substitutes sample metrics.
+- Code analysis runs locally in the browser and checks source text for possible embedded credentials, dynamic evaluation, debug statements/logging, TODOs, and long lines.
+- Resume analysis runs locally in the browser and checks common sections, bullet points, measurable outcomes, and optional job-description keywords.
+- Code and resume text are not uploaded or saved by these analysis tools. They provide heuristic guidance, not compiler, security-audit, AI, or hiring predictions.
 
-The code scan, resume analysis, user authentication, GitHub OAuth, and report modules are **not implemented yet**. They are not represented as working features.
+User authentication, GitHub OAuth, remote report storage, and AI-powered analysis are **not implemented**. Code/resume analysis currently runs locally and does not require those integrations.
 
 ## Architecture
 
@@ -91,6 +94,14 @@ The backend checks its Supabase connection at `GET /api/health`. If configuratio
 
 The public visitor metric is useful for product visibility, not billing or security decisions. Client-side tracking can be blocked or spoofed.
 
+## Local code and resume analysis
+
+Open **Code analysis** or **Resume analyzer** from the workspace. Both tools run in the current browser tab and do not call the Node API.
+
+- Code analysis accepts pasted source or source/text files up to 500 KB. Its checks are simple text-pattern heuristics; use your normal compiler, linter, and security tooling for a complete review.
+- Resume analysis accepts pasted text or `.txt`/`.md` files up to 500 KB. Add a job description for an optional keyword comparison. PDF and Word files are not parsed; copy their text into the editor.
+- Analysis results are not saved and disappear when you leave or refresh the page.
+
 ## Environment variables
 
 The root `.env.example` documents the current backend values and placeholders for later server-side integrations. Configure only `VITE_API_BASE_URL` in the frontend. Never prefix private credentials with `VITE_`.
@@ -109,7 +120,7 @@ npm run lint
 
 ## Next stages
 
-Implement Supabase Auth and user-owned RLS tables; code/resume storage and analysis APIs; GitHub OAuth; AI services; broader integration tests; and deployment hardening. These stages are required before presenting CodeGuard AI as the complete SaaS in the original specification.
+Implement Supabase Auth and user-owned RLS tables; optional code/resume storage and server-side analysis APIs; GitHub OAuth; AI services; broader integration tests; and deployment hardening. Those integrations are not required for the current browser-based analysis tools.
 
 ## Deploy the current website
 
