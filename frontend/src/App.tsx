@@ -26,6 +26,7 @@ import { useVisitorAnalytics } from './hooks/useVisitorAnalytics'
 import LandingPage from './pages/LandingPage'
 import CodeAnalysisPage from './pages/CodeAnalysisPage'
 import ResumeAnalyzerPage from './pages/ResumeAnalyzerPage'
+import GitHubIntegrationPage from './pages/GitHubIntegrationPage'
 import './App.css'
 
 const VisitorActivityChart = lazy(() => import('./components/VisitorActivityChart'))
@@ -407,7 +408,7 @@ function App() {
                 <div className="module-list">
                   <ModuleRow href="/code-analysis" icon={<Braces size={18} />} title="Code analysis" description="Local static checks and risk hints" tag="READY · LOCAL" />
                   <ModuleRow href="/resume-analyzer" icon={<FileText size={18} />} title="Resume analyzer" description="Local resume and job keyword check" tag="READY · LOCAL" />
-                  <ModuleRow href="/integrations" icon={<GitBranch size={18} />} title="GitHub repositories" description="Connect a repository to get started" tag="NOT CONNECTED" />
+                  <ModuleRow href="/integrations" icon={<GitBranch size={18} />} title="GitHub repositories" description="Read-only access to selected repositories" tag="GITHUB APP" />
                 </div>
               </div>
               <div className="panel connection-panel">
@@ -440,6 +441,8 @@ function App() {
           <CodeAnalysisPage />
         ) : pathname === '/resume-analyzer' ? (
           <ResumeAnalyzerPage />
+        ) : pathname === '/integrations' ? (
+          <GitHubIntegrationPage />
         ) : (
           <div className="content placeholder-content">
             <div className="eyebrow"><span className="eyebrow-line" /> WORKSPACE MODULE</div>
@@ -459,7 +462,7 @@ function App() {
                 <strong>{pathname === '/help' ? 'What is available today' : pathname === '/settings' ? 'Service connection status' : 'Integration setup required'}</strong>
                 <p>
                   {pathname === '/help'
-                    ? 'Code and resume checks run locally in your browser. Visitor analytics requires the Supabase migration and Node API, while GitHub OAuth still needs server-side credentials.'
+                    ? 'Code and resume checks run locally in your browser. Visitor analytics uses Supabase and the Node API; GitHub repository access uses a read-only GitHub App configured on the backend.'
                     : pathname === '/settings'
                       ? analytics.status === 'ready'
                         ? 'The analytics API is connected. Private credentials remain on the server and are never exposed in this browser.'
